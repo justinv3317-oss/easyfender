@@ -1,5 +1,532 @@
-<html>
-  <body>
-    <h1>EasyFender - Coming Soon</h1>
-  </body>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EasyFender — Find Car Body Parts Fast</title>
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Search hoods, trunks, bumpers, doors and more — all in one place."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f7f7f7;
+  --border: #e8e8e8;
+  --text: #111111;
+  --muted: #888888;
+  --footer-bg: #f0f0f0;
+  --accent: #111111;
+  --font: 'Inter', sans-serif;
+}
+
+html { scroll-behavior: smooth; color-scheme: light; }
+body { background: #ffffff !important; color: #111111 !important; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+}
+.logo {
+  font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text); text-decoration: none; cursor: pointer;
+}
+.logo span { color: #555; font-weight: 400; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: 0.82rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+/* ── HERO ── */
+.hero {
+  padding: 9rem 2.5rem 5rem;
+  max-width: 900px; margin: 0 auto;
+}
+.hero-eyebrow {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 1rem;
+}
+.hero-sub {
+  font-size: 1rem; color: var(--muted); line-height: 1.7;
+  max-width: 480px; margin-bottom: 2.5rem;
+}
+
+/* ── SEARCH ── */
+.search-wrap {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  align-items: stretch; max-width: 780px;
+}
+select, .search-btn {
+  font-family: var(--font); font-size: 0.88rem;
+  border: 1px solid var(--border); outline: none;
+}
+select {
+  background: var(--surface2); color: var(--text);
+  padding: 0.7rem 2rem 0.7rem 0.8rem; cursor: pointer;
+  appearance: none; flex: 1; min-width: 120px;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.7rem center;
+}
+select:focus, select:hover { border-color: #999; }
+select option { background: #fff; }
+.search-btn {
+  background: var(--text); color: #fff;
+  padding: 0.7rem 1.6rem; font-weight: 600; cursor: pointer;
+  transition: background 0.2s; white-space: nowrap; border-color: var(--text);
+}
+.search-btn:hover { background: #333; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 0 2.5rem; }
+
+/* ── PART SECTIONS ── */
+.parts-wrapper { max-width: 1200px; margin: 0 auto; padding: 3rem 2.5rem 5rem; }
+.part-section { margin-bottom: 4rem; }
+
+.part-section-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;
+}
+.part-section-title {
+  font-size: 1.15rem; font-weight: 700;
+  text-decoration: underline; text-underline-offset: 4px;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.part-see-all {
+  font-size: 0.78rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; transition: color 0.2s;
+}
+.part-see-all:hover { color: var(--text); }
+
+/* ── CAROUSEL ── */
+.carousel-wrapper { position: relative; }
+.carousel {
+  display: flex; gap: 12px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.carousel::-webkit-scrollbar { display: none; }
+
+.listing-card {
+  flex: 0 0 220px; scroll-snap-align: start;
+  border: 1px solid var(--border); text-decoration: none;
+  color: var(--text); display: flex; flex-direction: column;
+  transition: border-color 0.2s, box-shadow 0.2s; background: #fff;
+}
+@media (max-width: 600px) { .listing-card { flex: 0 0 75vw; } }
+.listing-card:hover {
+  border-color: #bbb;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.card-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--surface2); overflow: hidden;
+}
+.card-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.3s;
+}
+.listing-card:hover .card-img img { transform: scale(1.03); }
+.card-img-fallback {
+  width: 100%; height: 100%; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #ccc;
+}
+
+.card-info { padding: 0.75rem 0.85rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
+.card-title {
+  font-size: 0.8rem; font-weight: 400; color: #111; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-price {
+  font-size: 0.92rem; font-weight: 600; color: #111;
+  margin-top: auto; padding-top: 0.4rem;
+}
+
+/* CAROUSEL ARROWS */
+.carousel-nav { display: flex; gap: 0.4rem; margin-top: 0.6rem; justify-content: flex-end; }
+.carousel-btn {
+  width: 30px; height: 30px; background: var(--surface2);
+  border: 1px solid var(--border); color: #555;
+  font-size: 0.85rem; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+}
+.carousel-btn:hover { background: var(--text); color: #fff; border-color: var(--text); }
+
+/* SKELETON */
+.skeleton-card {
+  flex: 0 0 220px; border: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.skel-img { width: 100%; aspect-ratio: 4/3; background: #f0f0f0; animation: shimmer 1.3s infinite; }
+.skel-body { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.skel-line { height: 9px; background: #f0f0f0; border-radius: 2px; animation: shimmer 1.3s infinite; }
+.skel-line.w70 { width: 70%; }
+.skel-line.w40 { width: 40%; height: 13px; margin-top: 0.3rem; }
+@keyframes shimmer { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+/* SEARCH RESULTS SECTION */
+#search-results {
+  display: none; max-width: 1200px; margin: 0 auto;
+  padding: 2.5rem 2.5rem 0;
+}
+#search-results.visible { display: block; }
+.search-result-label {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+}
+.search-result-title {
+  font-size: 1.15rem; font-weight: 700;
+  text-decoration: underline; text-underline-offset: 4px;
+  color: var(--text); margin-bottom: 1.2rem;
+}
+
+/* FOOTER */
+footer {
+  background: var(--footer-bg);
+  padding: 2.5rem 2.5rem;
+  margin-top: 2rem;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-logo {
+  font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
+  cursor: pointer; text-decoration: none;
+}
+.footer-logo span { color: #888; font-weight: 400; }
+.footer-col { display: flex; flex-direction: column; gap: 0.4rem; }
+.footer-col-title { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; margin-bottom: 0.2rem; }
+.footer-text { font-size: 0.8rem; color: #999; line-height: 1.6; }
+.footer-bottom {
+  max-width: 1200px; margin: 1.5rem auto 0;
+  padding-top: 1.5rem; border-top: 1px solid #ddd;
+  font-size: 0.75rem; color: #aaa;
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+
+  <nav>
+    <span class="logo" onclick="resetView()">EasyFender<span> — Body Parts Search</span></span>
+    <ul class="nav-links"><li><a href="#browse">Browse</a></li></ul>
+  </nav>
+
+  <!-- HERO -->
+
+  <section class="hero">
+    <p class="hero-eyebrow">Exterior Body Parts Search</p>
+    <h1>Find the part you need.<br>Skip the runaround.</h1>
+    <p class="hero-sub">EasyFender pulls live listings so you can search hoods, bumpers, doors, fenders and more — without jumping between sites.</p>
+    <div class="search-wrap">
+      <select id="sel-year"><option value="">Year</option></select>
+      <select id="sel-make"><option value="">Make</option></select>
+      <select id="sel-model"><option value="">Model</option></select>
+      <select id="sel-part">
+        <option value="">Part Type</option>
+        <option value="hood">Hood</option>
+        <option value="trunk lid">Trunk</option>
+        <option value="front bumper cover">Front Bumper</option>
+        <option value="rear bumper cover">Rear Bumper</option>
+        <option value="door shell">Door</option>
+        <option value="fender">Fender</option>
+        <option value="quarter panel">Quarter Panel</option>
+        <option value="grille">Grille</option>
+        <option value="headlight assembly">Headlight</option>
+        <option value="taillight assembly">Taillight</option>
+      </select>
+      <button class="search-btn" onclick="doSearch()">Search</button>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- SEARCH RESULTS -->
+
+  <section id="search-results">
+    <p class="search-result-label">Search Results</p>
+    <h2 class="search-result-title" id="results-title">Results</h2>
+    <div class="carousel-wrapper">
+      <div class="carousel" id="search-carousel"></div>
+      <div class="carousel-nav">
+        <button class="carousel-btn" onclick="scrollCarousel('search-carousel',-1)">←</button>
+        <button class="carousel-btn" onclick="scrollCarousel('search-carousel',1)">→</button>
+      </div>
+    </div>
+    <br/><hr class="divider" style="margin:0 0 0 0"/>
+  </section>
+
+  <!-- BROWSE BY PART -->
+
+  <div class="parts-wrapper" id="browse">
+    <div id="parts-container"></div>
+  </div>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <span class="footer-logo" onclick="resetView()">EasyFender<span> </span></span>
+        <p class="footer-text" style="margin-top:0.5rem;max-width:260px">Search exterior car body parts from real listings — fast.</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Browse Parts</span>
+        <span class="footer-text">Hood · Trunk · Fender</span>
+        <span class="footer-text">Bumpers · Doors · Grille</span>
+        <span class="footer-text">Headlight · Taillight</span>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">About</span>
+        <span class="footer-text">EasyFender is a body parts<br>search engine. We pull live<br>listings so you don't have to.</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 EasyFender. All rights reserved. Listings sourced from eBay via affiliate program.
+    </div>
+  </footer>
+
+  <script>
+    const EPN_ID = 'YOUR_CAMPAIGN_ID'; // ← Replace with your eBay Partner Network ID
+
+    const PARTS = [
+      { name: 'Hood',          query: 'car hood OEM replacement panel' },
+      { name: 'Trunk',         query: 'trunk lid OEM replacement' },
+      { name: 'Front Bumper',  query: 'front bumper cover OEM replacement' },
+      { name: 'Rear Bumper',   query: 'rear bumper cover OEM replacement' },
+      { name: 'Door',          query: 'car door shell OEM replacement' },
+      { name: 'Fender',        query: 'car fender OEM replacement panel' },
+      { name: 'Quarter Panel', query: 'quarter panel OEM replacement' },
+      { name: 'Grille',        query: 'front grille OEM replacement' },
+      { name: 'Headlight',     query: 'headlight assembly OEM replacement' },
+      { name: 'Taillight',     query: 'taillight assembly OEM replacement' },
+    ];
+
+    function ebayUrl(query) {
+      return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&_sacat=33637&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${EPN_ID}&customid=easyfender&toolid=10001&mkevt=1`;
+    }
+
+    function ebayRss(query) {
+      return `https://rss.ebay.com/rss2?satitle=${encodeURIComponent(query)}&sacat=33637&sargn=-1%26saslc=1&sadis=200&fsop=1&fsoo=1`;
+    }
+
+    async function fetchListings(query, limit = 12) {
+      try {
+        const proxy = 'https://api.allorigins.win/get?url=';
+        const res = await fetch(proxy + encodeURIComponent(ebayRss(query)));
+        const data = await res.json();
+        const xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+        const items = Array.from(xml.querySelectorAll('item')).slice(0, limit);
+        return items.map(item => {
+          const title = item.querySelector('title')?.textContent?.trim() || 'Listing';
+          const linkEl = item.querySelector('link');
+          const link = linkEl?.nextSibling?.nodeValue?.trim() || linkEl?.textContent?.trim() || ebayUrl(query);
+          const desc = item.querySelector('description')?.textContent || '';
+          const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+          const img = imgMatch ? imgMatch[1].replace(/\$_\d+\./, '$_57.') : null;
+          const priceMatch = (title + ' ' + desc).match(/US \$([\d,]+\.?\d*)/i) || (title + ' ' + desc).match(/\$([\d,]+\.?\d*)/);
+          const price = priceMatch ? '$' + priceMatch[1] : null;
+          return { title, link, img, price };
+        });
+      } catch (e) { return []; }
+    }
+
+    function skeletonHTML(n = 5) {
+      return Array.from({length: n}).map(() => `
+        <div class="skeleton-card">
+          <div class="skel-img"></div>
+          <div class="skel-body">
+            <div class="skel-line"></div>
+            <div class="skel-line w70"></div>
+            <div class="skel-line w40"></div>
+          </div>
+        </div>`).join('');
+    }
+
+    function cardHTML(item, query) {
+      const href = (item.link && item.link.startsWith('http')) ? item.link : ebayUrl(query);
+      const img = item.img
+        ? `<img src="${item.img}" alt="" loading="lazy" onerror="this.outerHTML='<div class=card-img-fallback>No Photo</div>'">`
+        : `<div class="card-img-fallback">No Photo</div>`;
+      const price = item.price
+        ? `<div class="card-price">${item.price}</div>`
+        : `<div class="card-price" style="color:#999;font-size:0.78rem">See listing</div>`;
+      return `
+        <a class="listing-card" href="${href}" target="_blank" rel="noopener">
+          <div class="card-img">${img}</div>
+          <div class="card-info">
+            <div class="card-title">${item.title}</div>
+            ${price}
+          </div>
+        </a>`;
+    }
+
+    function fallbackCardHTML(query) {
+      return `
+        <a class="listing-card" href="${ebayUrl(query)}" target="_blank" rel="noopener" style="min-width:220px">
+          <div class="card-img"><div class="card-img-fallback">View on eBay</div></div>
+          <div class="card-info">
+            <div class="card-title">Browse live listings</div>
+            <div class="card-price">See All →</div>
+          </div>
+        </a>`;
+    }
+
+    function scrollCarousel(id, dir) {
+      const el = document.getElementById(id);
+      if (el) el.scrollBy({ left: dir * 240, behavior: 'smooth' });
+    }
+
+    // BUILD PART SECTIONS
+    const container = document.getElementById('parts-container');
+    PARTS.forEach((part, i) => {
+      const cId = `c-${i}`;
+      const section = document.createElement('div');
+      section.className = 'part-section';
+      section.innerHTML = `
+        <div class="part-section-header">
+          <h2 class="part-section-title">${part.name}</h2>
+          <a class="part-see-all" href="${ebayUrl(part.query)}" target="_blank" rel="noopener">See all on eBay →</a>
+        </div>
+        <div class="carousel-wrapper">
+          <div class="carousel" id="${cId}">${skeletonHTML(5)}</div>
+          <div class="carousel-nav">
+            <button class="carousel-btn" onclick="scrollCarousel('${cId}',-1)">←</button>
+            <button class="carousel-btn" onclick="scrollCarousel('${cId}',1)">→</button>
+          </div>
+        </div>`;
+      container.appendChild(section);
+
+      // Lazy load on scroll
+      const obs = new IntersectionObserver((entries, o) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          o.disconnect();
+          fetchListings(part.query, 12).then(items => {
+            const carousel = document.getElementById(cId);
+            if (!carousel) return;
+            carousel.innerHTML = items.length
+              ? items.map(item => cardHTML(item, part.query)).join('')
+              : fallbackCardHTML(part.query);
+          });
+        });
+      }, { rootMargin: '300px' });
+      obs.observe(section);
+    });
+
+    // YEAR DROPDOWN
+    const yearSel = document.getElementById('sel-year');
+    for (let y = new Date().getFullYear() + 1; y >= 1970; y--) {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y; yearSel.appendChild(o);
+    }
+
+    // MAKES & MODELS
+    const makesModels = {
+      'Acura':['ILX','MDX','RDX','TL','TLX','TSX'],
+      'BMW':['3 Series','5 Series','X3','X5','328i','330i'],
+      'Buick':['Enclave','Encore','LaCrosse','Regal'],
+      'Cadillac':['ATS','CTS','Escalade','SRX','XT5'],
+      'Chevrolet':['Camaro','Colorado','Corvette','Cruze','Equinox','Malibu','Silverado','Suburban','Tahoe','Traverse'],
+      'Chrysler':['200','300','Pacifica','Town & Country'],
+      'Dodge':['Challenger','Charger','Dart','Durango','Grand Caravan','Journey'],
+      'Ford':['Bronco','Edge','Escape','Expedition','Explorer','F-150','Fusion','Mustang','Ranger'],
+      'GMC':['Acadia','Canyon','Sierra','Terrain','Yukon'],
+      'Honda':['Accord','Civic','CR-V','HR-V','Odyssey','Pilot','Ridgeline'],
+      'Hyundai':['Elantra','Santa Fe','Sonata','Tucson'],
+      'Infiniti':['G35','G37','Q50','Q60','QX60'],
+      'Jeep':['Cherokee','Compass','Gladiator','Grand Cherokee','Renegade','Wrangler'],
+      'Kia':['Forte','Optima','Sorento','Soul','Sportage','Telluride'],
+      'Lexus':['ES','GS','GX','IS','RX'],
+      'Lincoln':['Continental','MKZ','Navigator'],
+      'Mazda':['CX-5','CX-9','Mazda3','Mazda6','MX-5 Miata'],
+      'Mercedes-Benz':['C-Class','E-Class','GLE','S-Class'],
+      'Nissan':['Altima','Frontier','Maxima','Murano','Pathfinder','Rogue','Sentra','Titan','Versa'],
+      'RAM':['1500','2500','3500'],
+      'Subaru':['Crosstrek','Forester','Impreza','Legacy','Outback','WRX'],
+      'Tesla':['Model 3','Model S','Model X','Model Y'],
+      'Toyota':['4Runner','Avalon','Camry','Corolla','Highlander','Prius','RAV4','Tacoma','Tundra'],
+      'Volkswagen':['Atlas','Golf','GTI','Jetta','Passat','Tiguan'],
+      'Volvo':['S60','S90','XC40','XC60','XC90']
+    };
+
+    const makeSel  = document.getElementById('sel-make');
+    const modelSel = document.getElementById('sel-model');
+    Object.keys(makesModels).sort().forEach(make => {
+      const o = document.createElement('option');
+      o.value = make; o.textContent = make; makeSel.appendChild(o);
+    });
+    makeSel.addEventListener('change', () => {
+      modelSel.innerHTML = '<option value="">Model</option>';
+      (makesModels[makeSel.value] || []).forEach(m => {
+        const o = document.createElement('option');
+        o.value = m; o.textContent = m; modelSel.appendChild(o);
+      });
+    });
+
+    // SEARCH
+    function doSearch() {
+      const year  = document.getElementById('sel-year').value;
+      const make  = document.getElementById('sel-make').value;
+      const model = document.getElementById('sel-model').value;
+      const part  = document.getElementById('sel-part').value;
+      if (!make || !part) { alert('Please select at least a Make and Part Type.'); return; }
+      const query = [year, make, model, part].filter(Boolean).join(' ');
+      const label = [year, make, model, part].filter(Boolean).join(' ');
+      document.getElementById('results-title').textContent = label;
+      const carousel = document.getElementById('search-carousel');
+      carousel.innerHTML = skeletonHTML(5);
+      const rs = document.getElementById('search-results');
+      rs.classList.add('visible');
+      rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      fetchListings(query, 12).then(items => {
+        carousel.innerHTML = items.length
+          ? items.map(item => cardHTML(item, query)).join('')
+          : fallbackCardHTML(query);
+      });
+    }
+
+    function resetView() {
+      document.getElementById('search-results').classList.remove('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
 </html>

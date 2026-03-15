@@ -356,7 +356,7 @@ footer {
 
     async function fetchListings(query, limit = 12) {
       try {
-        const proxy = 'https://api.allorigins.win/get?url=';
+        const proxy = https://corsproxy.io/?
         const res = await fetch(proxy + encodeURIComponent(ebayRss(query)));
         const data = await res.json();
         const xml = new DOMParser().parseFromString(data.contents, 'text/xml');
